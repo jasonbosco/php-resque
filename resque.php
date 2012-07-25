@@ -38,6 +38,12 @@ if(!empty($INTERVAL)) {
 	$interval = $INTERVAL;
 }
 
+$oneJobPerInterval = false;
+$ONEJOBPERINTERVAL = getenv('ONEJOBPERINTERVAL');
+if(!empty($ONEJOBPERINTERVAL)) {
+    $oneJobPerInterval = true;
+}
+
 $count = 1;
 $COUNT = getenv('COUNT');
 if(!empty($COUNT) && $COUNT > 1) {
@@ -56,7 +62,7 @@ if($count > 1) {
 			$worker = new Resque_Worker($queues);
 			$worker->logLevel = $logLevel;
 			fwrite(STDOUT, '*** Starting worker '.$worker."\n");
-			$worker->work($interval);
+			$worker->work($interval, $oneJobPerInterval);
 			break;
 		}
 	}
@@ -74,6 +80,6 @@ else {
 	}
 
 	fwrite(STDOUT, '*** Starting worker '.$worker."\n");
-	$worker->work($interval);
+	$worker->work($interval, $oneJobPerInterval);
 }
 ?>

@@ -153,7 +153,7 @@ class Resque_Worker
 	 *
 	 * @param int $interval How often to check for new jobs across the queues.
 	 */
-	public function work($interval = 5)
+	public function work($interval = 5, $oneJobPerInterval = false)
 	{
 		$this->updateProcLine('Starting');
 		$this->startup();
@@ -221,6 +221,11 @@ class Resque_Worker
 
 			$this->child = null;
 			$this->doneWorking();
+
+            if ($oneJobPerInterval) {
+                $this->log('Sleeping for ' . $interval, self::LOG_VERBOSE);
+                usleep($interval * 1000000);
+            }
 		}
 
 		$this->unregisterWorker();
