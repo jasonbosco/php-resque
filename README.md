@@ -157,6 +157,18 @@ variable:
 Getting your application underway also includes telling the worker your job
 classes, by means of either an autoloader or including them.
 
+### Forcing workers to execute only one job in an interval ###
+
+The default behavior of a worker is to continuously pick up jobs from a non-empty queue until the queue is empty. Once
+the queue is empty, the worker will wait for `interval`
+number of seconds before checking if the queue has a pending job.
+
+To override this default behavior, you can use the `oneJobPerInterval`
+flag to force the worker to wait for `interval` seconds after completing a job. This mode is useful to pace jobs out over
+a period of time.
+
+The resque.php bootstrap file recognizes a ONEJOBPERINTERVAL environment variable.
+
 ### Logging ###
 
 The port supports the same environment variables for logging to STDOUT.
@@ -189,7 +201,7 @@ order:
 
 ### Running Multiple Workers ###
 
-Multiple workers ca be launched and automatically worked by supplying
+Multiple workers can be launched and automatically worked by supplying
 the `COUNT` environment variable:
 
 	$ COUNT=5 php resque.php
