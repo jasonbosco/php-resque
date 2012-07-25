@@ -223,6 +223,14 @@ class Resque_Worker
 			$this->doneWorking();
 
             if ($oneJobPerInterval) {
+                //Before sleeping, check if we received a shutdown event.
+                // We're doing a second check here (instead of adding the entire oneJobPerInterval flag check at the
+                // beginning of the loop) because, when we start the worker, we want it to process its first job
+                // immediately instead of waiting for interval seconds. We also want the worker to quit immediately after
+                // a job when it is told to, instead of waiting for interval seconds and then quiting.
+                if($this->shutdown) {
+                    break;
+                }
                 $this->log('Sleeping for ' . $interval, self::LOG_VERBOSE);
                 usleep($interval * 1000000);
             }
